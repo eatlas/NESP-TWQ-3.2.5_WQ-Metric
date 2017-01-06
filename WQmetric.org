@@ -1,0 +1,147 @@
+#+TITLE:Notes on running the WQmetric on the HPC
+#+AUTHOR:Murray Logan
+#+EMAIL:m.logan@aims.gov.au
+#+DATE:2016-20-12
+#+STARTUP: showall
+#+STARTUP: hidestars
+
+* Logging in
+  - if you are reading this, you clearly are able to log in... ;)
+  - Nevertheless, here are the instructions.
+  - There are two logins
+    | login           | Description                                         |   |   |   |
+    |-----------------+-----------------------------------------------------+---+---+---|
+    | hpc-login       | - this is the login for submitting jobs             |   |   |   |
+    |                 | - *do not run scripts directly from this login*     |   |   |   |
+    |                 | - once logged in, you only need to change directory |   |   |   |
+    |                 | cd /export/project/WQmetric                         |   |   |   |
+    |-----------------+-----------------------------------------------------+---+---+---|
+    | hpc-interactive | - this is the login for testing scripts             |   |   |   |
+    |                 | - scripts only run in while you are logged in       |   |   |   |
+    |                 | - you cannot schedule or query jobs from this login |   |   |   |
+    |                 | - once logged in, you would run                     |   |   |   |
+    |                 | cd /export/project/WQmetric                         |   |   |   |
+    |                 | module load R/3.2.5                                 |   |   |   |
+    |                 | module load emacs/25.1.1                            |   |   |   |
+    |-----------------+-----------------------------------------------------+---+---+---|
+
+
+
+* Running scripts
+  - R scripts are not run directly
+  - The HPC scheduling software (PBS) operates on batch files
+  - These batch files have special tags (config info) that define the resource provisioning for the scheduler
+	- these tags begin with #PBS
+	- lines what begin with # and a space are ignored  
+  - Unfortunately, the documentation we have is particularly bad and it also appears that there is a couple of bugs in PBS
+  - Consequently, some of the configuration information must be provided on the command line when queuing a job
+	- an example would be 
+	  qsub -l mem=20gb -l nodes=1:ppn=5 bootBOM.batch
+  - Important job commands
+    | Command | Description    | Example                                         | Notes                                                                                   |
+    |---------+----------------+-------------------------------------------------+-----------------------------------------------------------------------------------------|
+    | qsub    | Submit a job   | qsub -l mem=20gb -l nodes=1:ppn=5 bootBOM.batch | The example will queue up the job and allocate 20gb to 5 processes within a single node |
+    | qstat   | Get job status | qstat -a                                        | The example will list all current jobs                                                  |
+    | qdel    | Delete a job   | qdel 5879                                       | The example will delete job 5879                                                        |
+    |---------+----------------+-------------------------------------------------+-----------------------------------------------------------------------------------------|
+	
+  - You will notice in most of the WQ_*.R files I have placed blocks of code within a WQ_tryCatch() function that I have written.  Essentially this function acts as a error handler and outputs the status to a log file.
+	This way, we can review the log files to review what did and did not work and when the process fails, we can work out what had been working and what did not work.  
+  - Note the WQ_tryCatch() should ensure that the batch file keeps running even with syntax errors within the function.  However, it does mean that the script will happily keep going when there is a problem...
+  - Before queing a batch file (and thus a script), make sure:
+	- the walltime (amount of time - in seconds - the process will run before being killed) is adequate
+	- the email address is useful
+	- the number of processes ppn=? matches the registerDoParallel(cores=?) statement in the corresponding .R script
+
+* Analysis notes
+  - before exploring the HPC stuff too much, have a look through the PDF.  This has some context and analysis for Niskin (AIMS discrete samples)
+  - the data are HUGE. = Daily/1km spatial/3 Measures
+  - in an attempt to keep the processing manageable, I have chunked the data up into Measure/Region/Waterbody
+  - the (24) Regions/Waterbodies are defined by shapefiles hacked together from GBRMPA shapefiles
+	
+* TODO [1/4]
+  - [X] Generate a skeleton of scripts
+  - [ ] Select random cases to follow through the sequence of processing/collating/indexing etc and ensure that each step is correct
+  - [ ] Explore other ways to progagate statistical uncertainty though the aggregation hierarchies.
+	- some of the Zones (e.g. Cape York Outershelf) are really huge and take hours and massive amounts of RAM to bootstrap even to only 100 reps (which is not enough)
+	- the major challenge is that the indicies are not gaussian and most are bound to [0,1]
+	- perhaps we can approximate somehow
+  - [ ] I am thinking that for MAMP (which is not scaled etc), we should apply an invlogit transform of bootsrapp values prior to summarizing in order to bind to [0,1].  Alternatively, we could summarize and then transform summaries to invlogit.. 
+  - [ ] Run all index combinations through bootstrapping etc
+  - [ ] Perterb some input data (add 5%, 10%, 20% etc noise) and explore impacts on outcomes. 
+
+* Satellite data
+  | Task                                | Batch file           | R script            | Depends                  | Date       | Complete | Notes                                                                                                                |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Generate Zone shapefiles            | getGIS.batch         | WQ_GIS.R            | *Shapefiles from GBRMPA* |            |          | Yet to be ratified. Currently cant be performed on HPC                                                               |
+  |                                     |                      |                     |                          |            |          | - stored as data/GIS/spatial.<REGION>.<WATERBODY>.RData                                                              |
+  |                                     |                      |                     |                          |            |          | - Note the names used in the GBRMPA shapefiles for NRM Regions are                                                   |
+  |                                     |                      |                     |                          |            |          | not the names that Britta would prefer to use and what she has used in                                               |
+  |                                     |                      |                     |                          |            |          | guidelines - there is a lookup to do this conversion.                                                                |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Define some parameter files         | -                    | -                   |                          |            |          |                                                                                                                      |
+  | - wq.guidelines.csv                 |                      |                     |                          |            |          | - Created by Britta *not yet ratified*                                                                               |
+  | - measures.txt                      |                      |                     |                          |            |          | - measures.txt acts as a lookup for the Measure hierarchy and defines                                                |
+  |                                     |                      |                     |                          |            |          | the display unit labels in various formats                                                                           |
+  | - spatial.csv                       |                      |                     |                          |            |          | - spatial.csv acts as a lookup for the Spatial hierarchy and provides                                                |
+  |                                     |                      |                     |                          |            |          | the conversion betweeen GBRMPA Zone names and Britta's preferred names.                                              |
+  | - overwrites                        |                      |                     |                          |            |          | - overwrites.csv - currently not in use                                                                              |
+  | - weights.m                         |                      |                     |                          |            |          | - weights.m.csv - currently not in use                                                                               |
+  | - weights.s                         |                      |                     |                          |            |          | - weights.s.csv - currently not in use                                                                               |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Retrieve Satellite data             | getBOM.batch         | WQ_getBOM.R         | WQ_GIS.R                 | 07/12/2016 | Y        | - stored as data/<YR>/A20[0-9][0-9].P1D.ANN_MIM_RMP.nc                                                               |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Process Satellite data              | processBOM.batch     | WQ_processBOM.R     | WQ_getBOM.R              | 27/12/2016 | N        | - stored as data/<YR>/<MEASURE>.<REGION>_<WATERBODY>.RData  (SpatialPolygons)                                        |
+  | - clip to shapefiles                |                      |                     | *Shapefiles*             |            |          | - stored as data/<YR>/<MEASURE>.<REGION>_<WATERBODY>.df.RData  (data.frame)                                          |
+  | - add waterYear and Season          |                      |                     |                          |            |          |                                                                                                                      |
+  | - consolidate to Zone               |                      |                     |                          |            |          |                                                                                                                      |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Collate Satellite data              | collateBOM.batch     | WQ_collateBOM.R     | WQ_processBOM.R          | 21/12/2016 | N        | - stored as data/processed/<MEASURE>_<REGION>_<WATERBODY>.RData                                                      |
+  | - collate all water years together  |                      |                     |                          |            |          |                                                                                                                      |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Consolidate Satellite data          | consolidateBOM.batch | WQ_consolidateBOM.R | WQ_collateBOM.R          | 02/01/2017 | N        | - stored as data/processed/data_<MEASURE>__<REGION>___<WATERBODY>.RData                                              |
+  | - add Measure, Region and WaterBody |                      |                     |                          |            |          |                                                                                                                      |
+  | - add guideline values              |                      |                     |                          |            |          |                                                                                                                      |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Generate indices                    | indexBOM.batch       | WQ_indexBOM.R       | WQ_consolidateBOM.R      | 02/01/2017 | N        |                                                                                                                      |
+  |                                     |                      |                     | *Guidelines from GBRMPA* |            |          | Yet to be ratified (06/01/2017).                                                                                     |
+  | - define hierarchies                |                      |                     |                          |            |          | - _Annual_ stored as data/indexed/data.idx_<MEASURE>__<REGION>___<WATERBODY>.RData                                   |
+  | - various indices                   |                      |                     |                          |            |          | - _Seasonal_ stored as data/indexed/data.idx.seasonal_<MEASURE>__<REGION>___<WATERBODY>.RData                        |
+  | 1. Annual/Seasonal                  |                      |                     |                          |            |          | - _Annual exceedance_ stored as data/indexed/data.idx.exceed_<MEASURE>__<REGION>___<WATERBODY>.RData                 |
+  | 2. Binary/MAMP/fsMAMP/MAMP4         |                      |                     |                          |            |          | - _Seasonal exceedance_ stored as data/indexed/data.idx.exceed.seasonal_<MEASURE>__<REGION>___<WATERBODY>.RData      |
+  | 3. CCME/Exceedance                  |                      |                     |                          |            |          | - _CCME_ stored as data/indexed/data.idx.CCME__<REGION>___<WATERBODY>.RData                                          |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Simple aggregation                  | aggregateBOM.batch   | WQ_aggregateBOM.R   | WQ_indexBOM.R            |            |          | - I have not really got far with this                                                                                |
+  | 1. Measure last                     |                      |                     |                          |            |          | - the intention is to use it as a progressive QAQC for the bootstrapping                                             |
+  | - measure/site/year                 |                      |                     |                          |            |          | - that is, to show simple aggregations relatively quickly to get a sence for what bootstrapping should calc          |
+  | - measure/zone/year                 |                      |                     |                          |            |          |                                                                                                                      |
+  | - subindicator/zone/year            |                      |                     |                          |            |          |                                                                                                                      |
+  | - indicator/zone/year               |                      |                     |                          |            |          |                                                                                                                      |
+  | 2. Spatial last                     |                      |                     |                          |            |          |                                                                                                                      |
+  | - measure/site/year                 |                      |                     |                          |            |          |                                                                                                                      |
+  | - subindicator/site/year            |                      |                     |                          |            |          |                                                                                                                      |
+  | - indicator/zone/year               |                      |                     |                          |            |          |                                                                                                                      |
+  | - indicator/zone/year               |                      |                     |                          |            |          |                                                                                                                      |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Bootstrapp                          | bootBOM.batch        | WQ_bootBOM.R        | WQ_indexBOM.R            |            |          | - This requires some thought.  Some of the data sets are really large resulting in really slow bootstrapping         |
+  | - measure/site/year                 |                      |                     |                          |            |          | - *we might need to come up with an alternative way to progagate uncertainty through aggregation hierarchies*        |
+  | - subindicator/site/year            |                      |                     |                          |            |          | Annual fsMAMP:                                                                                                       |
+  | - indicator/site/year               |                      |                     |                          |            |          | - _full data_ data/bootstrap/fsMAMP/Annual/fsMAMP_boot.<SPATIAL>.<MEASURE>___<REGION>____<WATERBODY>.RData           |
+  | - indicator/zone/year               |                      |                     |                          |            |          | - _summarized data_ data/bootstrap/fsMAMP/Annual/fsMAMP_boot.<SPATIAL>.<MEASURE>.sum___<REGION>____<WATERBODY>.RData |
+  |                                     |                      |                     |                          |            |          |                                                                                                                      |
+  |                                     |                      |                     |                          |            |          | * Need to loop this though each of the following combinations*                                                       |
+  |                                     |                      |                     |                          |            |          | - Annual fsMAMP                                                                                                      |
+  |                                     |                      |                     |                          |            |          | - Seasonal fsMAMP                                                                                                    |
+  |                                     |                      |                     |                          |            |          | - Annual Binary                                                                                                      |
+  |                                     |                      |                     |                          |            |          | - Seasonal Binary                                                                                                    |
+  |                                     |                      |                     |                          |            |          | - Annual MAMP                                                                                                        |
+  |                                     |                      |                     |                          |            |          | - Seasonal MAMP                                                                                                      |
+  |                                     |                      |                     |                          |            |          | - Annual Exceedance                                                                                                  |
+  |                                     |                      |                     |                          |            |          | - Seasonal Exceedance                                                                                                |
+  |                                     |                      |                     |                          |            |          | - Annual CCME                                                                                                        |
+  |                                     |                      |                     |                          |            |          | - Seasonal CCME                                                                                                      |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  | Summarize                           | summarizeBOM.batch   | WQ_summarizeBOM.R   | WQ_bootBOM.R             |            |          | - not even started this yet                                                                                          |
+  |-------------------------------------+----------------------+---------------------+--------------------------+------------+----------+----------------------------------------------------------------------------------------------------------------------|
+  
+* Niskin data

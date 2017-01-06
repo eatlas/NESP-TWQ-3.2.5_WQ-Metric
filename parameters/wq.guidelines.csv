@@ -1,0 +1,112 @@
+Zone                                 ,Measure ,Unit  ,Annual guideline,Dry ,Wet ,DirectionOfFailure,Justification/Source
+Enclosed_Coastal_Cape York			 ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,QLD WQ guidelines
+Enclosed_Coastal_Wet Tropics         ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,There is no seasonal adjustment
+Enclosed_Coastal_Dry Tropics         ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Enclosed_Coastal_Mackay Whitsunday   ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Enclosed_Coastal_Fitzroy             ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Enclosed_Coastal_Burnett Mary        ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+,,,,,,,
+Open_Coastal_Cape York               ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,GBRMPA WQ guidelines
+Open_Coastal_Wet Tropics             ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,"40% higher in summer, 30% lower in winter"
+Open_Coastal_Dry Tropics             ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,Here summer is taken as Wet Season 
+Open_Coastal_Mackay Whitsunday       ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,and winter is taken as Dry Season
+Open_Coastal_Fitzroy                 ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,
+Open_Coastal_Burnett Mary            ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,
+,,,,,,,
+Midshelf_Cape York                   ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,GBRMPA WQ guidelines
+Midshelf_Wet Tropics                 ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,"40% higher in summer, 30% lower in winter"
+Midshelf_Dry Tropics                 ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,Here summer is taken as Wet Season 
+Midshelf_Mackay Whitsunday           ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,and winter is taken as Dry Season
+Midshelf_Fitzroy                     ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,
+Midshelf_Burnett Mary                ,chl     ,ugL-1 ,0.45            ,0.32,0.63,H                 ,
+,,,,,,,
+Offshore_Cape York                   ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,GBRMPA WQ guidelines
+Offshore_Wet Tropics                 ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,"40% higher in summer, 30% lower in winter"
+Offshore_Dry Tropics                 ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,Here summer is taken as Wet Season 
+Offshore_Mackay Whitsunday           ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,and winter is taken as Dry Season
+Offshore_Fitzroy                     ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,
+Offshore_Burnett Mary                ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,
+,,,,,,,
+Enclosed_Coastal_Cape York           ,nap     ,mgL-1 ,25              ,25  ,25  ,H                 ,QLD WQ guidelines
+Enclosed_Coastal_Wet Tropics         ,nap     ,mgL-1 ,25              ,25  ,25  ,H                 ,There is no seasonal adjustment and
+Enclosed_Coastal_Dry Tropics         ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,values for CY and WT are not determined
+Enclosed_Coastal_Mackay Whitsunday   ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,Suggest applying same ratio as for turbidity
+Enclosed_Coastal_Fitzroy             ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,"between CY/WT and others, i.e (15*10)/6=25"
+Enclosed_Coastal_Burnett Mary        ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,NAP is taken as = TSS in this context
+,,,,,,,
+Open_Coastal_Cape York               ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,GBRMPA WQ guidelines
+Open_Coastal_Wet Tropics             ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,"20% higher in summer, 20% lower in winter"
+Open_Coastal_Dry Tropics             ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,Here summer is taken as Wet Season 
+Open_Coastal_Mackay Whitsunday       ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,and winter is taken as Dry Season
+Open_Coastal_Fitzroy                 ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,
+Open_Coastal_Burnett Mary            ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,NAP is taken as = TSS in this context
+,,,,,,,
+Midshelf_Cape York                   ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,GBRMPA WQ guidelines
+Midshelf_Wet Tropics                 ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,"20% higher in summer, 20% lower in winter"
+Midshelf_Dry Tropics                 ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,Here summer is taken as Wet Season 
+Midshelf_Mackay Whitsunday           ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,and winter is taken as Dry Season
+Midshelf_Fitzroy                     ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,
+Midshelf_Burnett Mary                ,nap     ,mgL-1 ,2               ,1.6 ,2.4 ,H                 ,NAP is taken as = TSS in this context
+,,,,,,,
+Offshore_Cape York                   ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,GBRMPA WQ guidelines
+Offshore_Wet Tropics                 ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,"20% higher in summer, 20% lower in winter"
+Offshore_Dry Tropics                 ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,Here summer is taken as Wet Season 
+Offshore_Mackay Whitsunday           ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,and winter is taken as Dry Season
+Offshore_Fitzroy                     ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,
+Offshore_Burnett Mary                ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,NAP is taken as = TSS in this context
+,,,,,,,
+Enclosed_Coastal_Cape York           ,ntu     ,ntu   ,10              ,10  ,10  ,H                 ,QLD WQ guidelines
+Enclosed_Coastal_Wet Tropics         ,ntu     ,ntu   ,10              ,10  ,10  ,H                 ,There is no seasonal adjustment
+Enclosed_Coastal_Dry Tropics         ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,
+Enclosed_Coastal_Mackay Whitsunday   ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,Unclear as to why the CY/WT guidelines 
+Enclosed_Coastal_Fitzroy             ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,are higher than Southern regions
+Enclosed_Coastal_Burnett Mary        ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,
+,,,,,,,
+Open_Coastal_Cape York               ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,No guideline available but turbidity needed if logger 
+Open_Coastal_Wet Tropics             ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,data is to be integrated.
+Open_Coastal_Dry Tropics             ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,MMP used a correlation between TSS and NTU
+Open_Coastal_Mackay Whitsunday       ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,(based on whole of GBR data) which is also used here
+Open_Coastal_Fitzroy                 ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,
+Open_Coastal_Burnett Mary            ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,"Applied 20% higher in summer, 20% lower in winter"
+,,,,,,,
+Midshelf_Cape York                   ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,No guideline available but turbidity needed if logger 
+Midshelf_Wet Tropics                 ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,data is to be integrated.
+Midshelf_Dry Tropics                 ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,MMP used a correlation between TSS and NTU
+Midshelf_Mackay Whitsunday           ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,(based on whole of GBR data) which is also used here
+Midshelf_Fitzroy                     ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,
+Midshelf_Burnett Mary                ,ntu     ,ntu   ,1.5             ,1.2 ,1.8 ,H                 ,"Applied 20% higher in summer, 20% lower in winter"
+,,,,,,,
+Offshore_Cape York                   ,ntu     ,ntu   ,1               ,0.8 ,1.2 ,H                 ,No guideline available but turbidity needed if logger 
+Offshore_Wet Tropics                 ,ntu     ,ntu   ,1               ,0.8 ,1.2 ,H                 ,data is to be integrated.
+Offshore_Dry Tropics                 ,ntu     ,ntu   ,1               ,0.8 ,1.2 ,H                 ,MMP used a correlation between TSS and NTU
+Offshore_Mackay Whitsunday           ,ntu     ,ntu   ,1               ,0.8 ,1.2 ,H                 ,(based on whole of GBR data) which is also used here
+Offshore_Fitzroy                     ,ntu     ,ntu   ,1               ,0.8 ,1.2 ,H                 ,
+Offshore_Burnett Mary                ,ntu     ,ntu   ,1               ,0.8 ,1.2 ,H                 ,"Applied 20% higher in summer, 20% lower in winter"
+,,,,,,,
+Enclosed_Coastal_Cape York           ,sd      ,m     ,1               ,1   ,1   ,L                 ,QLD WQ guidelines
+Enclosed_Coastal_Wet Tropics         ,sd      ,m     ,1               ,1   ,1   ,L                 ,There is no seasonal adjustment
+Enclosed_Coastal_Dry Tropics         ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,
+Enclosed_Coastal_Mackay Whitsunday   ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,Unclear as to why the CY/WT guidelines 
+Enclosed_Coastal_Fitzroy             ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,are lower than Southern regions
+Enclosed_Coastal_Burnett Mary        ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,
+,,,,,,,
+Open_Coastal_Cape York               ,sd      ,m     ,10              ,10  ,10  ,L                 ,GBRMPA WQ guidelines
+Open_Coastal_Wet Tropics             ,sd      ,m     ,10              ,10  ,10  ,L                 ,There is no seasonal adjustment
+Open_Coastal_Dry Tropics             ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+Open_Coastal_Mackay Whitsunday       ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+Open_Coastal_Fitzroy                 ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+Open_Coastal_Burnett Mary            ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+,,,,,,,
+Midshelf_Cape York                   ,sd      ,m     ,10              ,10  ,10  ,L                 ,GBRMPA WQ guidelines
+Midshelf_Wet Tropics                 ,sd      ,m     ,10              ,10  ,10  ,L                 ,There is no seasonal adjustment
+Midshelf_Dry Tropics                 ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+Midshelf_Mackay Whitsunday           ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+Midshelf_Fitzroy                     ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+Midshelf_Burnett Mary                ,sd      ,m     ,10              ,10  ,10  ,L                 ,
+,,,,,,,
+Offshore_Cape York                   ,sd      ,m     ,17              ,17  ,17  ,L                 ,GBRMPA WQ guidelines
+Offshore_Wet Tropics                 ,sd      ,m     ,17              ,17  ,17  ,L                 ,There is no seasonal adjustment
+Offshore_Dry Tropics                 ,sd      ,m     ,17              ,17  ,17  ,L                 ,
+Offshore_Mackay Whitsunday           ,sd      ,m     ,17              ,17  ,17  ,L                 ,
+Offshore_Fitzroy                     ,sd      ,m     ,17              ,17  ,17  ,L                 ,
+Offshore_Burnett Mary                ,sd      ,m     ,17              ,17  ,17  ,L                 ,
