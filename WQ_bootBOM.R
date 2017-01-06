@@ -40,6 +40,8 @@ WQ_tryCatch(
 ## Step 1. Bootstrap to water year level for each measure/site (and GL/index method)
 ### CURRENTLY ONLY fsMAMP and Annual GL used..
 registerDoParallel(cores=6)
+index=fsMAMP
+
 if (1==2) {
 #registerDoParallel(cores=6)
 fs = list.files(path='data/indexed',pattern='^data.idx\\_',full.names=TRUE)
