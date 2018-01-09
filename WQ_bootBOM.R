@@ -15,6 +15,16 @@ Seed=123
 Size=100
 decimal.places=3
 
+index_type = rbind(
+    expand.grid(pattern='data.idx\\_.*', index=c('Binary','MAMP','fsMAMP','fsMAMP4'), Temporal='Annual'),
+    expand.grid(pattern='data.idx.seasonal\\_.*', index=c('Binary','MAMP','fsMAMP','fsMAMP4'), Temporal='Seasonal'),
+    expand.grid(pattern='data.idx.exceed\\_.*', index='Exceed', Temporal='Annual'),
+    expand.grid(pattern='data.idx.exceed.seasonal\\_.*', index='Exceed', Temporal='Seasonal')
+    )
+
+registerDoParallel(cores=1)
+
+
     ## Now try to bootstrapp------------------------------------------------
 WQ_tryCatch(
 {
@@ -40,12 +50,13 @@ WQ_tryCatch(
 ## Step 1. Bootstrap to water year level for each measure/site (and GL/index method)
 ### CURRENTLY ONLY fsMAMP and Annual GL used..
 registerDoParallel(cores=6)
-index=fsMAMP
+index='fsMAMP'
 
 if (1==2) {
 #registerDoParallel(cores=6)
-fs = list.files(path='data/indexed',pattern='^data.idx\\_',full.names=TRUE)
-#fs = fs[c(45)]
+    fs = list.files(path='data/indexed',pattern='^data.idx\\_',full.names=TRUE)
+    z = fs[49]
+    Size=1000
 foreach(z=fs) %dopar% {
     load(z)
     WQ_tryCatch(
@@ -58,32 +69,178 @@ foreach(z=fs) %dopar% {
         waterbody=unique(boot.site.measure.day$WaterBody)
         save(boot.site.measure.day, file=paste0('data/bootstrap/fsMAMP/Annual/fsMAMP_boot.site.measure.day__',meas,'___',region,'____',waterbody,'.RData'))
     },paste0('bootBOM.log'), msg=paste0('Prepare (Measure=',meas,', Region=',region,', water body=',waterbody,', Index=fsMAMP)'), return=TRUE)    
-    
-    ## ## Start with aggregating over day for each site (Lat/Long)
-    ## ## - to speed this up, dont perform the weight or overwrites at this level.
-    ## ## - effectively, the distributions are generated from the days within years
-    ## ## - also when calculating the bootstrap summaries, dont use unrtainty within (since
-    ## ##   each observation (date) has only a single value..
-    ## boot.site.measure.sum = (boot.site.measure = boot.site.measure.day %>% mutate(Weight=1) %>%
-    ##                              dplyr:::mutate(Site=interaction(Latitude,Longitude)) %>% dplyr:::select(-Index) %>% ungroup %>%
-    ##                                     #group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,Site,waterYear) %>%
-    ##                                     #do({WQ_weights(.,weights.m, lev='Date')}) %>%
-    ##                                     #WQ_Overwrites(overwrite, recursive=TRUE) %>%
-    ##                              group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,Site,waterYear,Date) %>%
-    ##                              filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
-    ##     group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,Site,waterYear) %>%
-    ##     MMP_bootStats(AggOver=NULL) %>% filter(!is.na(Measure) & !is.na(Site))
+    load(file=paste0('data/bootstrap/fsMAMP/Annual/fsMAMP_boot.site.measure.day__',meas,'___',region,'____',waterbody,'.RData'))
+    ## Start with aggregating over day for each site (Lat/Long)
+    ## - to speed this up, dont perform the weight or overwrites at this level.
+    ## - effectively, the distributions are generated from the days within years
+    ## - also when calculating the bootstrap summaries, dont use unrtainty within (since
+    ##   each observation (date) has only a single value..
+    boot.site.measure.sum = (boot.site.measure = boot.site.measure.day %>% mutate(Weight=1) %>%
+                                 dplyr:::mutate(Site=interaction(Latitude,Longitude)) %>% dplyr:::select(-Index) %>% ungroup %>%
+                                        #group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,Site,waterYear) %>%
+                                        #do({WQ_weights(.,weights.m, lev='Date')}) %>%
+                                        #WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                 group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,Site,waterYear,Date) %>%
+                                 filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+        group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,Site,waterYear) %>%
+        MMP_bootStats(AggOver=NULL) %>% filter(!is.na(Measure) & !is.na(Site))
 
+        save(boot.site.measure, file=paste0('data/temp/boot.site.measure__',meas,'___',region,'____',waterbody,'.RData'))
+
+
+
+    fs=list.files(path='data/temp/',pattern='boot.site.measure\\_.*',full.names=TRUE)
+    ## concatenate each of the measures for the different region/waterbodies
+    fs.str = unique(gsub('.*\\_{3}(.*)\\_{4}(.*).RData','\\1____\\2',fs))
+    f=fs.str[1]
+    eval(parse(text=paste0('wch = grep("',f,'",fs)')))
+    boot.site.measure.year = NULL
+    for (w in wch) {
+        load(fs[w])
+        boot.site.measure.year = rbind(boot.site.measure.year, boot.site.measure)
+    }
+    region=unique(boot.site.measure.year$Region)
+    waterbody=unique(boot.site.measure.year$WaterBody)
+    ##Now we can start bootstrapping in earnest
+    ## Now bootstrap (site/subindicator/year)
+    boot.site.subindicator.sum = (boot.site.subindicator = boot.site.measure.year %>% ungroup %>%
+                                      filter(!is.na(Boot)) %>%
+                                      dplyr:::select(-Weight,-Date) %>% 
+                                      group_by(Indicator,Subindicator,Region,WaterBody,Latitude,Longitude,waterYear) %>%
+                                      do({WQ_weights(.,weights.m, lev='Measure')}) %>%
+                                      WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                      group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,waterYear) %>%
+                                      filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+        MMP_bootStats(AggOver='Measure', Uncertainty.within=TRUE) %>% filter(!is.na(Subindicator) & !is.na(Latitude) & !is.na(Longitude))
+
+    boot.site.subindicator.sum %>% as.data.frame %>% head
+
+
+        ## Site/subindicator/year
+    boot.site.indicator.sum = (boot.site.indicator = boot.site.subindicator %>% ungroup %>% dplyr:::select(-Weight,-Measure) %>% 
+                                   group_by(Indicator,Region,WaterBody,Latitude,Longitude,waterYear) %>%
+                                   do({WQ_weights(.,weights.m, lev='Subindicator')}) %>%
+                                   WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                   group_by(Indicator,Subindicator,Region,WaterBody,Latitude,Longitude,waterYear) %>%
+                                   filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+        MMP_bootStats(AggOver='Subindicator', Uncertainty.within=TRUE) %>% filter(!is.na(Indicator) & !is.na(Latitude) & !is.na(Longitude))
+    boot.site.indicator.sum %>% as.data.frame %>% head
+
+        ## Zone/indicator/year
+        boot.zone.indicator.sum = (boot.zone.indicator = boot.site.indicator %>% ungroup %>% dplyr:::select(-Weight,-Subindicator) %>%
+                                        #dplyr:::mutate(Zone=interaction(Region,WaterBody)) %>%
+                                       group_by(Indicator,Region,WaterBody,waterYear) %>%
+                                       do({d=.; d$Site=interaction(d$Latitude,d$Longitude);WQ_weights(d,weights.s, lev='Site');}) %>%
+                                       WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                       group_by(Indicator,Region,WaterBody,Site,waterYear) %>%
+                                       filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+            MMP_bootStats(AggOver='Site', Uncertainty.within=TRUE) %>% filter(!is.na(Indicator) & !is.na(Region) & !is.na(WaterBody))
+
+boot.zone.indicator.sum %>% as.data.frame
+
+
+
+
+    ## Now Pathway C +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    ## Zone/Measure
+        ##Size=100
+        ##Ideally we would allow this to run the full bootsrapp routine.  Unfortunately, this necessitates 10,000 reps per pixel per year.
+        ## For many of the Region/Waterbodies (e.g. Cape York Offshore) this results in huge data that takes a very long time to aggregate etc.
+    ## Given that each pixel/year has approx 365 (minus missed days) worth of data, we could instead just take a proportional quantity from each..
+
+
+    boot.zone.measure.sum = (boot.zone.measure = boot.site.measure.year %>% ungroup %>% dplyr:::select(-Weight,-Date) %>%
+                                        #dplyr:::mutate(Zone=interaction(Region,WaterBody)) %>%
+                                       group_by(Indicator,Subindicator,Measure,Region,WaterBody,waterYear) %>%
+                                       do({d=.; d$Site=interaction(d$Latitude,d$Longitude);WQ_weights(d,weights.s, lev='Site');}) %>%
+                                       WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                       group_by(Indicator,Subindicator,Measure,Region,Site,WaterBody,waterYear) %>%
+                                       filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+            MMP_bootStats(AggOver='Site', Uncertainty.within=TRUE) %>% filter(!is.na(Measure) & !is.na(Region) & !is.na(WaterBody))
+    boot.zone.measure.sum %>% as.data.frame %>% head
+
+    
+        boot.zone.measure.sum = (boot.zone.measure = boot.site.measure.year %>% ungroup %>% dplyr:::select(-Weight,-Date) %>% 
+                                     group_by(Indicator,Subindicator,Measure,Region,WaterBody,waterYear) %>%
+                                     do({d=.; d$Site=interaction(d$Latitude,d$Longitude);WQ_weights(d,weights.s, lev='Site');}) %>%
+                                     WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                     group_by(Indicator,Subindicator,Measure,Region,Site,WaterBody,waterYear) %>%
+                                     filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+#            MMP_bootStats(AggOver='Site', Uncertainty.within=TRUE) %>% filter(!is.na(Measure) & !is.na(Region) & !is.na(WaterBody))
+        WQ_bootStats(AggOver='Site',Uncertainty.within=TRUE) %>% filter(!is.na(Measure) & !is.na(Region) & !is.na(WaterBody))
+boot.zone.measure.sum %>% as.data.frame %>% head
+    
+    ## Zone/subindicator/year
+        boot.zone.subindicator.sum = (boot.zone.subindicator = boot.zone.measure %>% ungroup %>% dplyr:::select(-Weight,-Site,-Latitude,-Longitude) %>% 
+                                          group_by(Indicator,Subindicator,Region,WaterBody,waterYear) %>%
+                                          do({WQ_weights(.,weights.m, lev='Measure')}) %>%
+                                          WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                          group_by(Indicator,Subindicator,Measure,Region,WaterBody,waterYear) %>%
+                                          filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+#            MMP_bootStats(AggOver='Measure', Uncertainty.within=FALSE) %>% filter(!is.na(Subindicator) & !is.na(Region) & !is.na(WaterBody))
+        WQ_bootStats(AggOver='Measure') %>% filter(!is.na(Subindicator) & !is.na(Region) & !is.na(WaterBody))
+        
+    ## Zone/indicator/year
+    boot.zone.indicator.sum = (boot.zone.indicator = boot.zone.subindicator %>% ungroup %>% dplyr:::select(-Weight,-Measure) %>% 
+                                       group_by(Indicator,Region,WaterBody,waterYear) %>%
+                                       do({WQ_weights(.,weights.m, lev='Subindicator')}) %>%
+                                       WQ_Overwrites(overwrite, recursive=TRUE) %>%
+                                       group_by(Indicator,Subindicator,Region,WaterBody,waterYear) %>%
+                                       filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
+            MMP_bootStats(AggOver='Subindicator', Uncertainty.within=FALSE) %>% filter(!is.na(Indicator) & !is.na(Region) & !is.na(WaterBody))
+    
+boot.zone.indicator.sum %>% as.data.frame
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
+
+    
     WQ_tryCatch(
     { 
         boot.site.measure.sum = (boot.site.measure = boot.site.measure.day %>% mutate(Weight=1) %>%
                                      dplyr:::select(-Index) %>% ungroup %>%
                                      filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE))) %>%
             group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,waterYear) %>%
-            MMP_bootStats(AggOver=NULL) %>% filter(!is.na(Measure) & !is.na(Latitude) & !is.na(Longitude))
+            do({x=.;xx=Baglb(data=x,gamma=0.5, r=10);data.frame(xx);}) %>% filter(!is.na(Measure) & !is.na(Latitude) & !is.na(Longitude))
+#            Baglb(gamma=0.5, r=10) %>% filter(!is.na(Measure) & !is.na(Latitude) & !is.na(Longitude))
+#            MMP_bootStats(AggOver=NULL) %>% filter(!is.na(Measure) & !is.na(Latitude) & !is.na(Longitude))
         
         save(boot.site.measure.sum, file=paste0('data/bootstrap/fsMAMP/Annual/fsMAMP_boot.site.measure.sum__',meas,'___',region,'____',waterbody,'.RData'))
         save(boot.site.measure, file=paste0('data/bootstrap/fsMAMP/Annual/fsMAMP_boot.site.measure__',meas,'___',region,'____',waterbody,'.RData'))
+
+        ## Try the approximation method
+        boot.site.measure = boot.site.measure.day %>% mutate(Weight=1) %>%
+                                     dplyr:::select(-Index) %>% ungroup %>%
+                                     filter(ifelse(!is.na(Boot) | row_number()==1,TRUE,FALSE)) %>%
+                                     group_by(Indicator,Subindicator,Measure,Region,WaterBody,Latitude,Longitude,waterYear) %>%
+                                     WQ_aggStats(.)
+                                     do({x=.
+                                        #print(x$Boot)
+                                         if (length(x$Boot)>1) {
+                                             e=estBeta(x$Boot[!is.na(x$Boot)])
+                                         }else {
+                                             e=list(shape1=NaN, shape2=NaN)
+                                         }
+                                         data.frame(Mean=mean(x$Boot, na.rm=TRUE), Median=median(x$Boot, na.rm=TRUE), n=length(x$Boot),shape1=e[[1]], shape2=e[[2]])
+                                     })
         
         rm(boot.site.measure.sum, boot.site.measure, boot.site.measure.day,data.idx)
         gc()

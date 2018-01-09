@@ -1,0 +1,22 @@
+Term	Description
+Indicator	the overall characteristic of interest, e.g. Water Quality
+Sub-indicator	the major components of interest of the Indicator, a grouping of a set of Measures, e.g. Water Clarity
+Measures	the measureable representatives (or lowest level identified as a proxy for these representatives) of the Sub-indicators,  e.g Chlorophyll-a
+Region	GBRMPA NRM region
+Water Body	   GBRMPA water body
+Zone	combination of Region and Water Body
+Year	twelve month period starting October 1 and ending on September 30 so as to reflect a 'water year'
+Threshold	derived from Water Quality Guidelines, yet applied to individual observations rather than annual averages
+Index	standardized representation of a measure typically expressed relative to a benchmark, guideline or threshold
+Metric	mathematical formulation or expression used to generate an Index
+Score	the name given to an index or aggregation of indices
+Grade	a categorization of a Score on a five point letter scale (A-E)
+AIMS	Australian Institute of Marine Science
+AIMS Insitu	In situ data (Niskin hand samples) collected as part of AIMS inshore monitoring program
+AIMS FLNTU	AIMS FLNTU logger data collected as part of AIMS inshore monitoring program
+Satellite	BOM MODIS satellite data
+eReefs	Biogeochemical model of the Great Barrier Reef
+Chlorophyll	the green pigment found in cyanobacteria as well as the chloroplasts of algae and plants and due to its roll in capturing energy from the sun, is a measure of productivity
+Turbitity	the cloudiness of the water, it is a measure of the relative clarity of a fluid
+Secchi Depth	the depth at which a 8-inch (20cm) disk of alternating white and black quadrants is no longer visible from the surface of fluid
+NOx	   combined nitrate and nitrite, it is a measure of nitrogeneous nutrients

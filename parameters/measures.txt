@@ -1,5 +1,6 @@
 "Source"      ;"Indicator"     ;"Subindicator"  ;"Measure" ;"Units"      ;"UnitsLabel"   ;"LongLabel"                          ;"Label"
-"AIMS Niskin" ;"Water Quality" ;"Chlorophyll"   ;"chl"     ;"ugL-1"      ;"Chla (µgL⁻¹)" ;"atop(Chlorophyll~a,(mu*g*L^{-1}))"  ;"Chlorophyll"
+"AIMS Niskin" ;"Water Quality" ;"Productivity"  ;"chl"     ;"ugL-1"      ;"Chla (µgL⁻¹)" ;"atop(Chlorophyll~a,(mu*g*L^{-1}))"  ;"Chlorophyll"
 "AIMS Niskin" ;"Water Quality" ;"Water Clarity" ;"nap"     ;"mgL-1"      ;"TSS (mgL⁻¹)"  ;"atop(Suspended,solids~(mg*L^-{1}))" ;"TSS"
 "AIMS Niskin" ;"Water Quality" ;"Water Clarity" ;"ntu"     ;"ntu"        ;"NTU (NTU)"    ;"atop(Suspended,solids~(NTU))"       ;"NTU"
 "AIMS Niskin" ;"Water Quality" ;"Water Clarity" ;"sd"      ;"m"          ;"Secchi (m)"   ;"atop(Secchi~depth,(m))"             ;"Secchi"
+"AIMS Niskin" ;"Water Quality" ;"Nutrients"     ;"NOx"     ;"ugL-1"      ;"NOx (µgL⁻¹)"  ;"atop(NOx,mu*g*L^{-1})"              ;"NOx"

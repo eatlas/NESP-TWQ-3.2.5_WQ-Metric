@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -S /bin/bash
+
+#PBS -N eda
+
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=200:00:00
+#PBS -l pmem=10gb
+#PBS -M m.logan@aims.gov.au
+#PBS -m abe
+
+
+cd /export/project/WQmetric
+
+module load R/3.2.5
+
+R --vanilla < WQ_eda.R 

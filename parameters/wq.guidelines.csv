@@ -1,8 +1,8 @@
 Zone                                 ,Measure ,Unit  ,Annual guideline,Dry ,Wet ,DirectionOfFailure,Justification/Source
 Enclosed_Coastal_Cape York			 ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,QLD WQ guidelines
-Enclosed_Coastal_Wet Tropics         ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,There is no seasonal adjustment
-Enclosed_Coastal_Dry Tropics         ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
-Enclosed_Coastal_Mackay Whitsunday   ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Enclosed_Coastal_Wet Tropics         ,chl     ,ugL-1 ,1.1             ,1.1 ,1.1 ,H                 ,There is no seasonal adjustment
+Enclosed_Coastal_Dry Tropics         ,chl     ,ugL-1 ,1               ,1   ,1   ,H                 ,
+Enclosed_Coastal_Mackay Whitsunday   ,chl     ,ugL-1 ,1.3             ,1.3 ,1.3 ,H                 ,
 Enclosed_Coastal_Fitzroy             ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
 Enclosed_Coastal_Burnett Mary        ,chl     ,ugL-1 ,2               ,2   ,2   ,H                 ,
 ,,,,,,,
@@ -27,10 +27,10 @@ Offshore_Mackay Whitsunday           ,chl     ,ugL-1 ,0.4             ,0.28,0.56
 Offshore_Fitzroy                     ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,
 Offshore_Burnett Mary                ,chl     ,ugL-1 ,0.4             ,0.28,0.56,H                 ,
 ,,,,,,,
-Enclosed_Coastal_Cape York           ,nap     ,mgL-1 ,25              ,25  ,25  ,H                 ,QLD WQ guidelines
-Enclosed_Coastal_Wet Tropics         ,nap     ,mgL-1 ,25              ,25  ,25  ,H                 ,There is no seasonal adjustment and
-Enclosed_Coastal_Dry Tropics         ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,values for CY and WT are not determined
-Enclosed_Coastal_Mackay Whitsunday   ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,Suggest applying same ratio as for turbidity
+Enclosed_Coastal_Cape York           ,nap     ,mgL-1 ,10              ,10  ,10  ,H                 ,QLD WQ guidelines
+Enclosed_Coastal_Wet Tropics         ,nap     ,mgL-1 ,10              ,10  ,10  ,H                 ,There is no seasonal adjustment and
+Enclosed_Coastal_Dry Tropics         ,nap     ,mgL-1 ,10              ,10  ,10  ,H                 ,values for CY and WT are not determined
+Enclosed_Coastal_Mackay Whitsunday   ,nap     ,mgL-1 ,10              ,10  ,10  ,H                 ,Suggest applying same ratio as for turbidity
 Enclosed_Coastal_Fitzroy             ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,"between CY/WT and others, i.e (15*10)/6=25"
 Enclosed_Coastal_Burnett Mary        ,nap     ,mgL-1 ,15              ,15  ,15  ,H                 ,NAP is taken as = TSS in this context
 ,,,,,,,
@@ -55,10 +55,10 @@ Offshore_Mackay Whitsunday           ,nap     ,mgL-1 ,0.7             ,0.56,0.84
 Offshore_Fitzroy                     ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,
 Offshore_Burnett Mary                ,nap     ,mgL-1 ,0.7             ,0.56,0.84,H                 ,NAP is taken as = TSS in this context
 ,,,,,,,
-Enclosed_Coastal_Cape York           ,ntu     ,ntu   ,10              ,10  ,10  ,H                 ,QLD WQ guidelines
-Enclosed_Coastal_Wet Tropics         ,ntu     ,ntu   ,10              ,10  ,10  ,H                 ,There is no seasonal adjustment
-Enclosed_Coastal_Dry Tropics         ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,
-Enclosed_Coastal_Mackay Whitsunday   ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,Unclear as to why the CY/WT guidelines 
+Enclosed_Coastal_Cape York           ,ntu     ,ntu   ,4               ,4   ,4   ,H                 ,QLD WQ guidelines
+Enclosed_Coastal_Wet Tropics         ,ntu     ,ntu   ,4               ,4   ,4   ,H                 ,There is no seasonal adjustment
+Enclosed_Coastal_Dry Tropics         ,ntu     ,ntu   ,4               ,4   ,4   ,H                 ,
+Enclosed_Coastal_Mackay Whitsunday   ,ntu     ,ntu   ,4               ,4   ,4   ,H                 ,Unclear as to why the CY/WT guidelines 
 Enclosed_Coastal_Fitzroy             ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,are higher than Southern regions
 Enclosed_Coastal_Burnett Mary        ,ntu     ,ntu   ,6               ,6   ,6   ,H                 ,
 ,,,,,,,
@@ -86,7 +86,7 @@ Offshore_Burnett Mary                ,ntu     ,ntu   ,1               ,0.8 ,1.2 
 Enclosed_Coastal_Cape York           ,sd      ,m     ,1               ,1   ,1   ,L                 ,QLD WQ guidelines
 Enclosed_Coastal_Wet Tropics         ,sd      ,m     ,1               ,1   ,1   ,L                 ,There is no seasonal adjustment
 Enclosed_Coastal_Dry Tropics         ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,
-Enclosed_Coastal_Mackay Whitsunday   ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,Unclear as to why the CY/WT guidelines 
+Enclosed_Coastal_Mackay Whitsunday   ,sd      ,m     ,1               ,1   ,1   ,L                 ,Unclear as to why the CY/WT guidelines 
 Enclosed_Coastal_Fitzroy             ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,are lower than Southern regions
 Enclosed_Coastal_Burnett Mary        ,sd      ,m     ,1.5             ,1.5 ,1.5 ,L                 ,
 ,,,,,,,
@@ -110,3 +110,31 @@ Offshore_Dry Tropics                 ,sd      ,m     ,17              ,17  ,17  
 Offshore_Mackay Whitsunday           ,sd      ,m     ,17              ,17  ,17  ,L                 ,
 Offshore_Fitzroy                     ,sd      ,m     ,17              ,17  ,17  ,L                 ,
 Offshore_Burnett Mary                ,sd      ,m     ,17              ,17  ,17  ,L                 ,
+,,,,,,,
+Enclosed_Coastal_Cape York           ,NOx     ,ugL-1 ,10              ,10  ,10  ,H                 ,Old MMP guidelines
+Enclosed_Coastal_Wet Tropics         ,NOx     ,ugL-1 ,10              ,10  ,10  ,H                 ,There is no seasonal adjustment
+Enclosed_Coastal_Dry Tropics         ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+Enclosed_Coastal_Mackay Whitsunday   ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+Enclosed_Coastal_Fitzroy             ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+Enclosed_Coastal_Burnett Mary        ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+,,,,,,,
+Open_Coastal_Cape York               ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,Old MMP guidelines
+Open_Coastal_Wet Tropics             ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,There is no seasonal adjustment
+Open_Coastal_Dry Tropics             ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+Open_Coastal_Mackay Whitsunday       ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+Open_Coastal_Fitzroy                 ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+Open_Coastal_Burnett Mary            ,NOx     ,ugL-1 ,3               ,3   ,3   ,H                 ,
+,,,,,,,
+Midshelf_Cape York                   ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,Old guidelines
+Midshelf_Wet Tropics                 ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,There is no seasonal adjustment
+Midshelf_Dry Tropics                 ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Midshelf_Mackay Whitsunday           ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Midshelf_Fitzroy                     ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Midshelf_Burnett Mary                ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+,,,,,,,
+Offshore_Cape York                   ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,Old MMP guidelines
+Offshore_Wet Tropics                 ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,There is no seasonal adjustment
+Offshore_Dry Tropics                 ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Offshore_Mackay Whitsunday           ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Offshore_Fitzroy                     ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,
+Offshore_Burnett Mary                ,NOx     ,ugL-1 ,2               ,2   ,2   ,H                 ,

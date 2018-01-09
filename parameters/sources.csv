@@ -1,0 +1,6 @@
+Source,          Custodian,   Description
+AIMS Insitu,     AIMS,        AIMS inshore monitoring program Niskin data
+AIMS FLNTU,      AIMS,        AIMS inshore monitoring program FLNTU logger data
+Satellite,       BOM,         BOM: Catalog http://ereeftds.bom.gov.au/ereefs/tds/catalog/ereef/mwq/P1D/2002/catalog.html
+eReefs,          eReefs,      First application of BGC data assimilation that is being used for GBR report card 7.
+eReefs926,       eReefs,      eReefs: http://dapds00.nci.org.au/thredds/catalog/fx3/gbr4_bgc_926/catalog.html

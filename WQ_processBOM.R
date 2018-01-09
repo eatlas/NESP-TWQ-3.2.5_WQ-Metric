@@ -33,7 +33,6 @@ WQ_tryCatch(
   }, paste0('processBOM.log'), msg='Load shapefiles', return=TRUE)
 
 
-
 registerDoParallel(cores=15)
 zones = gsub('data.*spatial\\.(.*).RData','\\1',fs)
 foreach(yr=as.character(seq(2002,2016,by=1))) %dopar% {

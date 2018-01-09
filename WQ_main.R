@@ -1,3 +1,12 @@
+#########################################################################
+## The following scripts consistitute the statistical analyses for     ##
+## NESP 3.2.5 - Testing and implimentation of the water quality metric ##
+## for 2017 and 2018 reef report cards.                                ##
+##                                                                     ##
+## They have been written by Murray Logan (AIMS) and run under R/3.2.5 ##
+## Ensure that the following HPC modules are loaded:                   ##
+## module load R/3.2.5                                                 ##
+#########################################################################
 
 source('WQ_functions.R')
 getConfigs()
@@ -18,7 +27,7 @@ if (sensititity.tests) source('WQ_sensitivity.R')
 ##,---------------
 ##| Satellite data
 ##`---------------
-                                        # if (getSatelliteData) source('WQ_getData.R')
+## if (getSatelliteData) source('WQ_getData.R')
 if (get.BOM) source('WQ_getBOM.R')
 if (process.BOM) source('WQ_processBOM.R')
 if (index.BOM) source('WQ_indexBOM.R')
@@ -44,13 +53,10 @@ if (process.Niskin) source('WQ_processNiskin.R')
 if (index.Niskin) source('WQ_index_niskin.R')
 if (index.FLNTU) source('WQ_index_flntu.R')
 
-
-
 ###############################
 ## Exploratory data analysis ##
 ###############################
 if (eda) source('WQ_eda.R')
-
 
 #####################
 ## Compare sources ##
