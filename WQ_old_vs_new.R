@@ -1,4 +1,4 @@
-#########################################################################
+=#########################################################################
 ## The following script is intended to compare the old and new metrics ##
 ## This involves illustrating the differences between:                 ##
 ## - different sources (Satellite vs eReefs)                           ##
@@ -382,32 +382,71 @@ fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=p
 data.all <- NULL
 for (f in fs) {
     load(f)
-    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='Satellite'))
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='Satellite', Index=index))
 }
 src='eReefs/'
 fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
 for (f in fs) {
     load(f)
-    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='eReefs'))
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='eReefs',Index=index))
 }
 src='eReefs926/'
 fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
 for (f in fs) {
     load(f)
-    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='eReefs926'))
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='eReefs926',Index=index))
 }
 src='niskin/'
 fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
 for (f in fs) {
     load(f)
-    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='AIMS insitu'))
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='AIMS insitu', Index=index))
 }
 src='flntu/'
 fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern='data.av.measure.zone.year.*',full.names=TRUE)
 for (f in fs) {
     load(f)
-    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='AIMS flntu'))
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='AIMS flntu',Index=index))
 }        
+
+index='Binary'
+temporal='Annual'
+src=''
+fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
+for (f in fs) {
+    load(f)
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='Satellite', Index=index))
+}
+src='eReefs/'
+fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
+for (f in fs) {
+    load(f)
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='eReefs',Index=index))
+}
+src='eReefs926/'
+fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
+for (f in fs) {
+    load(f)
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='eReefs926',Index=index))
+}
+src='niskin/'
+fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern=paste0('data.av.measure.zone.year.*',add.str,'.RData'),full.names=TRUE)
+for (f in fs) {
+    load(f)
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='AIMS insitu', Index=index))
+}
+src='flntu/'
+fs = list.files(path=paste0(src,'data/aggregated/',index,'/',temporal),pattern='data.av.measure.zone.year.*',full.names=TRUE)
+for (f in fs) {
+    load(f)
+    data.all <- rbind(data.all, data.frame(data.av.measure.zone.year,Source='AIMS flntu',Index=index))
+}        
+
+
+## get Binary
+
+
+
 
 GradeType='Uniform'
 data.all = data.all %>% mutate(Grade.MMP=WQ_generateGrades(Mean),Grade.GHHP=WQ_generateGrades(Mean,type='GHHP'),Grade.Uniform=WQ_generateGrades(Mean,type='Uniform'))
@@ -428,7 +467,7 @@ gradeBoundaries = WQ_gradeBoundaries(type=GradeType)
 
 measure='chl'
 unitLabel='Chlorophyll-a'
-g=ggplot(data.all %>% filter(Measure==measure,Complete=='Full', Source %in% c('Satellite','eReefs','eReefs926')), aes(y=Mean, x=waterYear)) +
+g=ggplot(data.all %>% filter(Measure==measure,Complete=='Full', Source %in% c('Satellite','eReefs','eReefs926'), Index=='fsMAMP'), aes(y=Mean, x=waterYear)) +
                                         #    annotate(geom='rect', xmin=-Inf,xmax=Inf,ymin=gradeBoundaries[2],ymax=gradeBoundaries[1], fill='#00734D10', size=0.2, color='grey90') +
                                         #annotate(geom='rect', xmin=-Inf,xmax=Inf,ymin=gradeBoundaries[3],ymax=gradeBoundaries[2], fill='#B0D23510', size=0.2, color='grey90') +
                                         #annotate(geom='rect', xmin=-Inf,xmax=Inf,ymin=gradeBoundaries[4],ymax=gradeBoundaries[3], fill='#F0C91810', size=0.2, color='grey90') +
@@ -452,4 +491,22 @@ g=ggplot(data.all %>% filter(Measure==measure,Complete=='Full', Source %in% c('S
                                         #ggtitle(paste0('Measure=',unitLabel,', Index=',index,', Temporal=', temporal)) +
     #guides(fill=guide_legend(override.aes=list(color='black', size=5)))
 ggsave(file=paste0('data/Old_vs_new/figures/Compare_years.pdf'), g, width=10, height=10, units='in')
-    
+
+## An alternative suggested by Cedric
+
+g=data.all %>% filter(Measure==measure,Complete=='Full', Source %in% c('Satellite','eReefs'), waterYear>2012) %>%
+    ggplot(aes(y=Mean, x=waterYear)) +
+    geom_line(aes(linetype=Source, color=Source)) +
+    geom_point(aes(fill=Grade), shape=21, color='black', size=3) +
+    scale_x_continuous('Water year', limits=c(2012.5,2016.5)) +
+    scale_y_continuous('Index', limits=c(0,1)) +
+    scale_fill_manual('Grade', breaks=LETTERS[1:5], labels=LETTERS[1:5],values=c('#00734D','#B0D235','#F0C918','#F47721','#ED1C24'), limits=LETTERS[1:5]) +
+    scale_color_manual('Source',breaks=c('Satellite','eReefs'), limits=c('Satellite','eReefs'), labels=c('Remote sensing','eReefs'),values=c('black','black')) +
+    scale_linetype_manual('Source',breaks=c('Satellite','eReefs'), limits=c('Satellite','eReefs'), labels=c('Remote sensing','eReefs'),values=c('dashed','solid')) +
+    facet_grid(Index~Region, scales='free_y') +
+    theme_bw(12) +
+        theme(strip.background=element_blank(), legend.key=element_blank()
+              #axis.text.x=element_text(angle=45,hjust=1)
+                                        #panel.grid.major.y=element_blank(), panel.grid.minor.y=element_blank()
+          )
+ggsave(file=paste0('data/Old_vs_new/figures/Compare_years_alt.pdf'), g, width=13, height=5, units='in')
