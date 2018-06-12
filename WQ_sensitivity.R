@@ -23,6 +23,7 @@ source('WQ_functions.R')
 ##        around the GL.  Specifically, how many consecutive          ##
 ##        exceedences (Duration) they have                            ##
 ########################################################################
+yscale='log'
 
 groups <- function(GL=10,R=10, set=1) {
     if (set==1) {
@@ -102,6 +103,23 @@ groups <- function(GL=10,R=10, set=1) {
 
 
 
+
+meta.file = data.frame()
+unlink('meta.file_sensitivity.csv')
+meta.file = 
+    data.frame(Filename=NA,
+               Title=NA,
+               Description=NA,
+               Attribution=NA,
+               Licencing=NA,
+               Location=NA,
+               Latitude=NA,
+               Longitude=NA,
+               PhotoGallery=NA)
+write.table(meta.file[0,], file='meta.file_sensitivity.csv', sep=',',row.names=FALSE, col.names=TRUE)
+
+
+
 GL=1
 dat=NULL
 for (Mean in c(0.05,0.1,0.15,0.2,0.5,1,2,4)) {
@@ -153,6 +171,8 @@ g2=ggplot(dat.sum.melt, aes(y=Value, x=as.numeric(Mean))) +
     scale_x_log10(breaks=scales:::log_breaks(10,base=2), labels=function(x) sprintf('%2.2f',x))
 grid.arrange(g1,g2, heights=c(1,2))
 ggsave(filename=paste0('data/sensitivity/A_comp.GL_',GL,'_',yscale,'.pdf'),grid.arrange(g1,g2, heights=c(1,2)), width=15, height=10)
+ggsave(filename=paste0('data/sensitivity/A_comp.GL_',GL,'_',yscale,'.jpg'),grid.arrange(g1,g2, heights=c(1,2)), width=15, height=10, dpi=300)
+
 
 ## dat = groups(GL=0.5,R=1000,set=2)
 ## dat %>% head
@@ -238,7 +258,19 @@ for (grp in 1:2) {
                       text=element_text(size=15))
             
             ggsave(filename=paste0('data/sensitivity/comp.Group_',grp,'.GL_',GL,'.R_',R,'_',yscale,'.pdf'),grid.arrange(g1,g2, heights=c(1,2)), width=15, height=10)
+            ggsave(filename=paste0('data/sensitivity/comp.Group_',grp,'.GL_',GL,'.R_',R,'_',yscale,'.jpg'),grid.arrange(g1,g2, heights=c(1,2)), width=15, height=10, dpi=300)
             ggsave(filename=paste0('Report/Figures/sensitivity.Group_',grp,'.GL_',GL,'.R_',R,'_',yscale,'.pdf'),grid.arrange(g1,g2, heights=c(1,2)), width=15, height=10)
+            meta.file =
+                data.frame(Filename=paste0('data/sensitivity/comp.Group_',grp,'.GL_',GL,'.R_',R,'_',yscale,'.jpg'),
+                           Title=paste0('Simulated data and associated indices (Threshold = ',GL,', R = ',R,') for a range of variances.'),
+                           Description=paste0('Simulated data and associated indices for threshold of ',GL,' and number of random sample draws of ',R,'.'),
+                           Attribution='Murray Logan (AIMS)',
+                           Licencing='CC-BY',
+                           Location='Great Barrier Reef',
+                           Latitude=NA,
+                           Longitude=NA,
+                           PhotoGallery='Sensitivity')
+            write.table(meta.file, file='meta.file_sensitivity.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
         }
     }    
 }

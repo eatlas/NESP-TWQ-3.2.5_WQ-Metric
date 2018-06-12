@@ -100,8 +100,8 @@ source('WQ_functions.R')
 
 edaYearMeasureViolin=TRUE
 edaMonthMeasureViolin=TRUE
-edaSpatialYear=FALSE
-edaSpatialYearlast=FALSE
+edaSpatialYear=TRUE
+edaSpatialYearlast=TRUE
 edaSpatialYearlastB=TRUE
 
 edaidxYearMeasureViolin=TRUE
@@ -127,6 +127,21 @@ spatial = read.csv('parameters/spatial.csv', strip.white=TRUE)
 
 unlink('log/eda.log')
 
+## We are going to setup a metadata record file that has:
+## Filename, Title, Description, Attribution, Licencing, Location, Latitude, Longitude, Photo Gallery
+meta.file = data.frame()
+unlink('meta.file_eda.csv')
+meta.file = 
+    data.frame(Filename=NA,
+               Title=NA,
+               Description=NA,
+               Attribution=NA,
+               Licencing=NA,
+               Location=NA,
+               Latitude=NA,
+               Longitude=NA,
+               PhotoGallery=NA)
+write.table(meta.file[0,], file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=TRUE)
 
 
 ## Start with a summary figure aggregated across all zones
@@ -170,6 +185,18 @@ for (meas in c('chl','nap','sd','NOx')) {
     if (yscale=='log') g = g + scale_y_log10(breaks=scales:::log_breaks(10,base=2), labels=function(x) sprintf('%2.2f',x))
     ggsave(filename=paste0('data/eda/eda.year.',meas,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=17, height=4, device=cairo_pdf)
     ggsave(filename=paste0('data/eda/eda.year.',meas,'_',gsub('/','',src),'_',yscale,'.png'),g,width=17, height=4,dpi=300)
+    ggsave(filename=paste0('data/eda/eda.year.',meas,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=17, height=4,dpi=300)
+    meta.file =
+        data.frame(Filename=paste0('data/eda/eda.year.',meas,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                   Title=paste0('Exploratory data analysis violin plots for ',src,' ', meas,' conditional on Region and Water body over the ',paste(range(dat1$waterYear), collapse='-'),' water years.'),
+                   Description=paste0('Observed (logarithmic axis with violin plot overlay) ',src,' ',meas,' data for each Region and Water body over the ',paste(range(dat1$waterYear), collapse='-'),' water years. Observations are ordered over time and colored conditional on season as Wet (blue symbols) and Dry (red symbols). Blue smoother represents Generalized Additive Mixed Model within a water year and purple line represents average within the water year. Horizontal red, black and green dashed lines denote the twice threshold, threshold and half threshold values respectively. Red and green background shading indicates the range (10% shade: x4,/4; 30% shade: x2,/2) above and below threshold respectively'),
+                   Attribution='Murray Logan (AIMS)',
+                   Licencing='CC-BY',
+                   Location='Great Barrier Reef',
+                   Latitude=NA,
+                   Longitude=NA,
+                   PhotoGallery='EDA.observed')
+    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
     system(paste0('cd data/eda/; convert -density 200 "eda.year.',meas,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.year.',meas,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
 }
 
@@ -244,6 +271,18 @@ foreach(src=c('niskin/','flntu/','','eReefs/','eReefs926/')) %do% {
                     
                     ggsave(filename=paste0('data/eda/eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=10, height=2.5, device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.png'),g,width=10, height=2.5,dpi=300)
+                    ggsave(filename=paste0('data/eda/eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=10, height=2.5,dpi=300)
+                    meta.file =
+                        data.frame(Filename=paste0('data/eda/eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                   Title=paste0('Exploratory data analysis violin plots for ',gsub('/','',src),' ', meas,' data from the ', waterbody,' of the ',region,' region conditional on water year.'),
+                                   Description=paste0('Observed (logarithmic axis with violin plot overlay) ',src,' ',meas,' data from the ', waterbody,' of the ',region,' region conditional on water year. Observations are ordered over time and colored conditional on season as Wet (blue symbols) and Dry (red symbols). Blue smoother represents Generalized Additive Mixed Model within a water year and purple line represents average within the water year. Horizontal red, black and green dashed lines denote the twice threshold, threshold and half threshold values respectively. Red and green background shading indicates the range (10% shade: x4,/4; 30% shade: x2,/2) above and below threshold respectively'),
+                                   Attribution='Murray Logan (AIMS)',
+                                   Licencing='CC-BY',
+                                   Location='Great Barrier Reef',
+                                   Latitude=NA,
+                                   Longitude=NA,
+                                   PhotoGallery='EDA.observed')
+                    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                     system(paste0('cd data/eda/; convert -density 200 "eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
                 },paste0('eda.log'), msg=paste0('EDA year plot for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=fsMAMP)'), return=TRUE)
             }
@@ -285,6 +324,18 @@ foreach(src=c('niskin/','flntu/','','eReefs/','eReefs926/')) %do% {
                     
                     ggsave(filename=paste0('data/eda/eda.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=20, height=10, device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.png'),g,width=20, height=10,dpi=300)
+                    ggsave(filename=paste0('data/eda/eda.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=20, height=10,dpi=300)
+                    meta.file =
+                        data.frame(Filename=paste0('data/eda/eda.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                   Title=paste0('Exploratory data analysis violin plots for ',gsub('/','',src),' ', meas,' data from the ', waterbody,' of the ',region,' region conditional on water year and month.'),
+                                   Description=paste0('Observed (logarithmic axis with violin plot overlay) ',gsub('/','',src),' ',meas,' data from the ', waterbody,' of the ',region,' region conditional on water year and month. Observations are ordered over time and colored conditional on season as Wet (blue symbols) and Dry (red symbols). Blue smoother represents Generalized Additive Mixed Model within a water year and purple line represents average within the water year. Horizontal red, black and green dashed lines denote the twice threshold, threshold and half threshold values respectively. Red and green background shading indicates the range (10% shade: x4,/4; 30% shade: x2,/2) above and below threshold respectively'),
+                                   Attribution='Murray Logan (AIMS)',
+                                   Licencing='CC-BY',
+                                   Location='Great Barrier Reef',
+                                   Latitude=NA,
+                                   Longitude=NA,
+                                   PhotoGallery='EDA.observed')
+                    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                     system(paste0('cd data/eda/; convert -density 200 "eda.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
                 },paste0('eda.log'), msg=paste0('EDA month plot for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=fsMAMP)'), return=TRUE)
             }
@@ -334,6 +385,18 @@ foreach(src=c('niskin/','flntu/','','eReefs/','eReefs926/')) %do% {
                     ratio=diff(xl)/diff(yl)
                     ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=(nc*2), height=(nr*2/ratio) + 0.4*ratio, device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.png'),g,width=(nc*2), height=(nr*2/ratio) + 0.4*ratio,dpi=300)
+                    ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=(nc*2), height=(nr*2/ratio) + 0.4*ratio,dpi=300)
+                    meta.file =
+                        data.frame(Filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                   Title=paste0('Spatial distribution of observed ',gsub('/','',src),' ', meas,' region conditional on water year.'),
+                                   Description=paste0('Spatial distribution of observed ',gsub('/','',src),' ',meas,' data conditional on water year. Observations are colored according to observed value.'),
+                                   Attribution='Murray Logan (AIMS)',
+                                   Licencing='CC-BY',
+                                   Location='Great Barrier Reef',
+                                   Latitude=NA,
+                                   Longitude=NA,
+                                   PhotoGallery='EDA.observed')
+                    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                     #system(paste0('cd data/eda/; convert -density 200 "eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
                 },paste0('eda.log'), msg=paste0('EDA spatial plot for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=fsMAMP)'), return=TRUE)                    
             }
@@ -366,6 +429,18 @@ foreach(src=c('niskin/','flntu/','','eReefs/','eReefs926/')) %do% {
                     #ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf'),g,width=(nc*2), height=(nr*2/ratio), device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf'),g,width=(nc*2), height=(nr*2/ratio)+0.4*ratio, device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.png'),g,width=(nc*2)+0.4*ratio, dpi=300)
+                    ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.jpg'),g,width=(nc*2)+0.4*ratio, dpi=300)
+                    meta.file =
+                        data.frame(Filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.jpg'),
+                                   Title=paste0('Spatial distribution of observed ',gsub('/','',src),' ', meas,' region conditional on water year (2010-2016).'),
+                                   Description=paste0('Spatial distribution of observed ',gsub('/','',src),' ',meas,' data conditional on water year (2010-2016). Observations are colored according to observed value.'),
+                                   Attribution='Murray Logan (AIMS)',
+                                   Licencing='CC-BY',
+                                   Location='Great Barrier Reef',
+                                   Latitude=NA,
+                                   Longitude=NA,
+                                   PhotoGallery='EDA.observed')
+                    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                     #ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.png'),g,width=(nc*3), height=(nr*3/ratio) + 0.8,dpi=300)
                     #system(paste0('cd data/eda/; convert -density 80 "eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf" "eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowresA.pdf"'))
                 },paste0('eda.log'), msg=paste0('EDA spatial plot (last years) for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=fsMAMP)'), return=TRUE)
@@ -405,8 +480,20 @@ foreach(src=c('niskin/','flntu/','','eReefs/','eReefs926/')) %do% {
                                         #ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf'),g,width=(nc*2), height=(nr*2/ratio), device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'B.pdf'),g,width=(nc*2), height=(nr*2/ratio)+0.4*ratio, device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'B.png'),g,width=(nc*2)+0.4*ratio, dpi=300)
+                    ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'B.jpg'),g,width=(nc*2)+0.4*ratio, dpi=300)
                                         #ggsave(filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.png'),g,width=(nc*3), height=(nr*3/ratio) + 0.8,dpi=300)
                                         #system(paste0('cd data/eda/; convert -density 80 "eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf" "eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowresA.pdf"'))
+                    meta.file =
+                        data.frame(Filename=paste0('data/eda/eda.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'B.jpg'),
+                                   Title=paste0('Spatial distribution of observed ',gsub('/','',src),' ', meas,' region conditional on water year (2010-2016).'),
+                                   Description=paste0('Spatial distribution of observed ',gsub('/','',src),' ',meas,' data conditional on water year (2010-2016). Observations are colored according to observed value.'),
+                                   Attribution='Murray Logan (AIMS)',
+                                   Licencing='CC-BY',
+                                   Location='Great Barrier Reef',
+                                   Latitude=NA,
+                                   Longitude=NA,
+                                   PhotoGallery='EDA.observed')
+                    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                 },paste0('eda.log'), msg=paste0('EDA spatial plot (last years) for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=fsMAMP)'), return=TRUE)
                 
             }
@@ -416,7 +503,6 @@ foreach(src=c('niskin/','flntu/','','eReefs/','eReefs926/')) %do% {
     } ##zone/measure
     close(pb)
 } #src
-
 
 
 
@@ -498,6 +584,19 @@ for (index in c('Binary','fsMAMP','fsMAMP4')) {
                         
                         ggsave(filename=paste0('data/eda/eda.idx_',index,'_year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=10, height=2.5, device=cairo_pdf)
                         ggsave(filename=paste0('data/eda/eda.idx_',index,'_year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.png'),g,width=10, height=2.5,dpi=300)
+                        ggsave(filename=paste0('data/eda/eda.idx_',index,'_year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=10, height=2.5,dpi=300)
+                        meta.file =
+                            data.frame(Filename=paste0('data/eda/eda.idx_',index,'_year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                       Title=paste0('Exploratory data analysis violin plots for ',index,' indexed ',gsub('/','',src),' ', meas,' data from the ', waterbody,' of the ',region,' region conditional on water year.'),
+                                       Description=paste0('Temporal distribution of ',index,' indexed ',src,' ',meas,' data from the ', waterbody,' of the ',region,' region conditional on water year. Index scores are ordered over time and colored conditional on season as Wet (blue symbols) and Dry (red symbols). Blue smoother represents Generalized Additive Mixed Model within a water year and purple line represents average within the water year. Horizontal red, black and green dashed lines denote the twice threshold, threshold and half threshold values respectively. Red and green background shading indicates the range (10% shade: x4,/4; 30% shade: x2,/2) above and below threshold respectively'),
+                                       Attribution='Murray Logan (AIMS)',
+                                       Licencing='CC-BY',
+                                       Location='Great Barrier Reef',
+                                       Latitude=NA,
+                                       Longitude=NA,
+                                       PhotoGallery='EDA.indices')
+                        write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
+                        system(paste0('cd data/eda/; convert -density 200 "eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))      
                                         #system(paste0('cd data/eda/; convert -density 200 "eda.idx.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.idx.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
                     },paste0('eda.log'), msg=paste0('EDA idx year plot for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=',index,')'), return=TRUE)
                 }
@@ -533,6 +632,18 @@ for (index in c('Binary','fsMAMP','fsMAMP4')) {
                             guides(color=guide_legend(override.aes=list(size=3)))
                         ggsave(filename=paste0('data/eda/eda.idx_',index,'_year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=20, height=10, device=cairo_pdf)
                         ggsave(filename=paste0('data/eda/eda.idx_',index,'_year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.png'),g,width=20, height=10,dpi=300)
+                        ggsave(filename=paste0('data/eda/eda.idx_',index,'_year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=20, height=10,dpi=300)
+                        meta.file =
+                            data.frame(Filename=paste0('data/eda/eda.idx_',index,'_year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                       Title=paste0('Exploratory data analysis violin plots for ',index,' indexed ',gsub('/','',src),' ', meas,' data from the ', waterbody,' of the ',region,' region conditional on water year and month.'),
+                                       Description=paste0('Temporal distribution of ',index,' indexed ',src,' ',meas,' data from the ', waterbody,' of the ',region,' region conditional on water year and month. Index scores are ordered over time and colored conditional on season as Wet (blue symbols) and Dry (red symbols). Blue smoother represents Generalized Additive Mixed Model within a water year and purple line represents average within the water year. Horizontal red, black and green dashed lines denote the twice threshold, threshold and half threshold values respectively. Red and green background shading indicates the range (10% shade: x4,/4; 30% shade: x2,/2) above and below threshold respectively'),
+                                       Attribution='Murray Logan (AIMS)',
+                                       Licencing='CC-BY',
+                                       Location='Great Barrier Reef',
+                                       Latitude=NA,
+                                       Longitude=NA,
+                                       PhotoGallery='EDA.indices')
+                        write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                                         #system(paste0('cd data/eda/; convert -density 200 "eda.idx.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.idx.year.month.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
                     },paste0('eda.log'), msg=paste0('EDA idx month plot for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=',index,')'), return=TRUE)
                 }
@@ -577,6 +688,18 @@ for (index in c('Binary','fsMAMP','fsMAMP4')) {
                         ratio=diff(xl)/diff(yl)
                         ggsave(filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf'),g,width=(nc*2), height=(nr*2/ratio) +0.4*ratio, device=cairo_pdf)
                         ggsave(filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.png'),g,width=(nc*2), height=(nr*2/ratio) + 0.4*ratio,dpi=300)
+                        ggsave(filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),g,width=(nc*2), height=(nr*2/ratio) + 0.4*ratio,dpi=300)
+                        meta.file =
+                            data.frame(Filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                       Title=paste0('Spatial distribution of ',index,' indexed ',gsub('/','',src),' ', meas,' region conditional on water year.'),
+                                       Description=paste0('Spatial distribution of ',index,' indexed ',gsub('/','',src),' ',meas,' data conditional on water year. Observations are colored according to observed value.'),
+                                       Attribution='Murray Logan (AIMS)',
+                                       Licencing='CC-BY',
+                                       Location='Great Barrier Reef',
+                                       Latitude=NA,
+                                       Longitude=NA,
+                                       PhotoGallery='EDA.indices')
+                        write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                                         #system(paste0('cd data/eda/; convert -density 200 "eda.idx.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.pdf" "eda.idx.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowres.pdf"'))
                     },paste0('eda.log'), msg=paste0('EDA idx spatial plot for  Measure/Site level (Source=',gsub('/','',src),' Region=',region,', water body=',waterbody,', Index=',index,')'), return=TRUE)                    
                 }
@@ -613,6 +736,18 @@ for (index in c('Binary','fsMAMP','fsMAMP4')) {
                     print(paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf'))
                     ggsave(filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf'),g,width=(nc*2), height=(nr*2/ratio)+0.4*ratio, device=cairo_pdf)
                     ggsave(filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.png'),g,width=(nc*3), height=(nr*3/ratio)+0.4*ratio,dpi=300)
+                    ggsave(filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.jpg'),g,width=(nc*3), height=(nr*3/ratio)+0.4*ratio,dpi=300)
+                    meta.file =
+                        data.frame(Filename=paste0('data/eda/eda.idx_',index,'_spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'.jpg'),
+                                   Title=paste0('Spatial distribution of ',index,' indexed ',gsub('/','',src),' ', meas,' region conditional on water year (2010-2016).'),
+                                   Description=paste0('Spatial distribution of ',index,' indexed ',gsub('/','',src),' ',meas,' data conditional on water year (2010-2016). Observations are colored according to observed value.'),
+                                   Attribution='Murray Logan (AIMS)',
+                                   Licencing='CC-BY',
+                                   Location='Great Barrier Reef',
+                                   Latitude=NA,
+                                   Longitude=NA,
+                                   PhotoGallery='EDA.indices')
+                    write.table(meta.file, file='meta.file_eda.csv', sep=',',row.names=FALSE, col.names=FALSE,append=TRUE)
                                         #system(paste0('cd data/eda/; convert -density 200 "eda.idx.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'A.pdf" "eda.idx.spatial.year.',meas,'_',region,'__',waterbody,'_',gsub('/','',src),'_',yscale,'_lowresA.pdf"'))
                     print(paste(z,'done'))
                 }

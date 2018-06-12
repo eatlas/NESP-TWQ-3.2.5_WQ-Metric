@@ -231,6 +231,42 @@ g = ggplot(comp.data.sum, aes(y=Value, x=Region)) +
 ggsave(filename='data/Old_vs_new/figures/Compare_sources.pdf', g, width=10, height=4)
 
 
+### newzones, new indices, new aggregations, same as above, but swap facet with a legend
+dat1 = dat %>% dplyr::filter(Zones=='New', Metric=='New') %>%
+    spread(key=Source, value=Value) %>%
+    mutate(diff=eReefs-Satellite)
+dat1=dat1 %>% dplyr::filter(WaterBody=='Open Coastal') %>% dplyr::select(-Metric,-Zones) %>%
+    arrange(Index) %>%
+    left_join(new.weights[[2]])
+dat1a=dat1 %>% group_by(Index) %>%
+    summarize(WaterBody=unique(WaterBody),
+              GL=mean(GL),
+              eReefs=weighted.mean(eReefs,w=Area),
+              Satellite=weighted.mean(Satellite,w=Area),
+              Area=sum(Area),
+              Perc.Area=sum(Perc.Area)) %>%
+    ungroup %>%
+    mutate(Region='GBR wide',diff=eReefs-Satellite) %>%
+    dplyr::select(Region,WaterBody,GL,Index,eReefs,Satellite,diff,Area,Perc.Area)
+comp.data=dat1 %>% rbind(dat1a)
+comp.data.sum = comp.data %>%
+    dplyr::select(Region,WaterBody,Index,eReefs,Satellite) %>%
+    gather(key=Source, value=Value,eReefs,Satellite) %>%
+    mutate(Grade=WQ_generateGrades(Value,type='Uniform'),
+           Region=factor(Region, levels=c('GBR wide','Cape York','Wet Tropics','Dry Tropics','Mackay Whitsunday','Fitzroy','Burnett Mary')))
+
+g = ggplot(comp.data.sum, aes(y=Value, x=Region)) +
+    geom_blank() +
+    geom_line(aes(x=as.numeric(Region),linetype=Index)) +
+    geom_point(aes(fill=Grade), shape=21, size=3) +
+    scale_fill_manual('Grade', breaks=LETTERS[1:5], labels=LETTERS[1:5],values=c('#00734D','#B0D235','#F0C918','#F47721','#ED1C24'), limits=LETTERS[1:5]) +
+    scale_linetype_manual('Index', breaks=c('Binary','fsMAMP'), labels=c('Binary','fsMAMP'), values=c('solid','dashed')) +
+    scale_y_continuous('Score', limits=c(0,1)) + 
+    facet_wrap(~Source,nrow=2) +
+    theme_bw() + theme(axis.title.x=element_blank())
+ggsave(filename='data/Old_vs_new/figures/Compare_index.pdf', g, width=10, height=4)
+
+
 
 
 ## sources with newzones, old index, new aggregation
