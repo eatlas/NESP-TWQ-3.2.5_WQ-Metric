@@ -11,3 +11,5 @@ The major data sources are not part of this repository and therefore it is not p
 You are free to use this code for any purpose, however, absolutely we assume absolutely no responsibility for its use.
 
 Enjoy!
+
+More details are available in the metadata record [R code for Testing and implementation of the water quality metric for the 2017 and 2018 reef report cards (NESP TWQ 3.2.5, AIMS)](https://eatlas.org.au/data/uuid/dbfc1b05-9cd4-4056-93ea-15d80c98cfb4)
